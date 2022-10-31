@@ -32,7 +32,11 @@ function translate(object, language) {
             if (matches) {
                 var fieldName = matches[1];
                 if (typeof(subject[fieldName]) !== 'string') {
-                    throw new Error('Field `' + fieldName + '` at `' + path + '` must be filled and being string')
+                    if (fieldName === 'tags' && typeof(subject[fieldName]) === 'object') {
+                        subject[fieldName] = [value[language]]
+                    } else {
+                        throw new Error('Field `' + fieldName + '` at `' + path + '` must be filled and being string')
+                    }
                 }
                 if (typeof(value) !== 'object') {
                     throw new Error('Field `' + path + '` must be object')
@@ -41,7 +45,9 @@ function translate(object, language) {
                     throw new Error('Field `' + path + '` does not contain language translation `' + language + '`')
                 }
                 if (typeof(value[language]) !== 'string') {
-                    throw new Error('Field at `' + path + '.' + language + '` must be string ')
+                    if (fieldName !== 'tags') {
+                        throw new Error('Field at `' + path + '.' + language + '` must be string ')
+                    } 
                 }
                 subject[fieldName] = value[language]
                 delete subject[key]
